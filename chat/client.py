@@ -4,9 +4,11 @@ import errno
 
 import sys
 
+from flask import request
+
 HEADER_LENGTH = 10
 IP = "127.0.0.1"
-PORT = 8001
+PORT = 9311
 
 
 class Client:
@@ -31,37 +33,39 @@ class Client:
     def message(self, message):
 
         self.socket.send(self.username_header + self.username)
-        while True:
-            message = input("{} > ".format(self.username.decode('utf-8')))
-            if message:
-                message = message.encode('utf-8')
-                message_header = "{:<{}}".format(len(message), HEADER_LENGTH).encode('utf-8')
-                self.socket.send(message_header + message)
+        # while True:
+            # message = input("{} > ".format(self.username.decode('utf-8')))
+            # message = request.form['myMessage']
+        print("MESSAGE IS: " + message)
+        if message:
+            message = message.encode('utf-8')
+            message_header = "{:<{}}".format(len(message), HEADER_LENGTH).encode('utf-8')
+            self.socket.send(message_header + message)
 
-            try:
-                while True:
-                    # Receive messages
-                    username_header = self.socket.recv(HEADER_LENGTH)
-                    if not len(username_header):
-                        print("Connection closed by client")
-                        sys.exit()
-
-                    username_length = int(username_header.decode('utf-8').strip())
-                    username = self.socket.recv(username_length).decode('utf-8')
-
-                    message_header = self.socket.recv(HEADER_LENGTH)
-                    message_length = int(message_header.decode('utf-8').strip())
-                    message = self.socket.recv(message_length).decode('utf-8')
-
-                    print("{}: {}".format(username, message))
-            except IOError as e:
-                if e.errno != errno.EAGAIN and e.errno != errno.EWOULDBLOCK:
-                    print("Reading error", str(e))
+        try:
+            while True:
+                # Receive messages
+                username_header = self.socket.recv(HEADER_LENGTH)
+                if not len(username_header):
+                    print("Connection closed by client")
                     sys.exit()
-                continue
-            except Exception as e:
-                print('General Error', str(e))
+
+                username_length = int(username_header.decode('utf-8').strip())
+                username = self.socket.recv(username_length).decode('utf-8')
+
+                message_header = self.socket.recv(HEADER_LENGTH)
+                message_length = int(message_header.decode('utf-8').strip())
+                message = self.socket.recv(message_length).decode('utf-8')
+
+                print("{}: {}".format(username, message))
+        except IOError as e:
+            if e.errno != errno.EAGAIN and e.errno != errno.EWOULDBLOCK:
+                print("Reading error", str(e))
                 sys.exit()
+
+        except Exception as e:
+            print('General Error', str(e))
+            sys.exit()
 
     def receive_message(self, client):
         try:

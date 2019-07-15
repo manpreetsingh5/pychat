@@ -3,7 +3,7 @@ import select
 
 HEADER_LENGTH = 10
 IP = "127.0.0.1"
-PORT = 8003
+PORT = 9311
 
 
 class Server:
@@ -13,6 +13,8 @@ class Server:
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sockets_list = [self.socket]
         self.clients = {}
+        self.objs = {}
+        self.messages2 = []
         return
 
 
@@ -25,7 +27,6 @@ class Server:
 
     def addsocket(self, client):
         self.sockets_list.append(client)
-
 
     def receive_message(self, client):
         try:
@@ -54,9 +55,10 @@ class Server:
 
 
                     user = self.receive_message(client_socket)
-                    print("Accepted new connection from {} :{} username:{}".format(client_addr[0], client_addr[1], user['data'].decode('utf-8')))
                     if user == False:
                         continue
+
+                    print("Accepted new connection from {} :{} username:{}".format(client_addr[0], client_addr[1], user['data'].decode('utf-8')))
                     self.addsocket(client_socket)
                     self.clients[client_socket] = user
 
@@ -73,7 +75,12 @@ class Server:
 
                     user = self.clients[notified_socket]
                     print("Received message from {}:{}".format(user['data'].decode('utf-8'), message['data'].decode('utf-8')))
-
+                    username = user['data'].decode('utf-8')
+                    message2 = message['data'].decode('utf-8')
+                    print('USERNAME: ', username)
+                    print('MESSAGE: ', message2)
+                    self.messages2.append({'user':username, 'message':message2})
+                    print(self.messages2)
                     for client in self.clients:
                         if client != notified_socket:
                             client.send(user['header'] + user['data'] + message['header'] + message['data'])

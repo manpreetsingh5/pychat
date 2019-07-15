@@ -1,3 +1,4 @@
+
 <html>
 <head>
     <title>Chat Room</title>
@@ -6,13 +7,34 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 </head>
     <body>
-        <ul id="messages"></ul>
-        <input type="text" id="myMessage">
-        <button id="sendbutton">Send</button>
-        <script type="javascript">
-            function myFunction(elmnt,clr) {
-                elmnt.style.color = clr;
-            }
-        </script>
+
+        <div id = "messages">
+            {% for message in messages.data %}
+            <li>{{message.user}} : {{message.message}}</li>
+            {% endfor %}
+
+        </div>
+        <form action="/handleClient" method="post">
+            <input type="text" name="myMessage">
+            <button id="newClient">Login</button>
+        </form>
+
+            <button id="sendbutton">Send</button>
     </body>
+
+    <script>
+            $.ajax({
+              url: "/handleClient",
+              type: "get",
+              data: {},
+              success: function(response) {
+                <!--$("#place_for_suggestions").html(messages);-->
+                console.log(response)
+                $('#messages').load(messages)
+              },
+              error: function(xhr) {
+                //Do Something to handle error
+              }
+            });
+    </script>
 </html>
