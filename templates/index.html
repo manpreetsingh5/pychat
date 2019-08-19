@@ -1,40 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
 
-<html>
 <head>
-    <title>Chat Room</title>
-    <script type="text/javascript"
-            src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <title>Flask_Chat_App</title>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </head>
-    <body>
 
-        <div id = "messages">
-            {% for message in messages.data %}
-            <li>{{message.user}} : {{message.message}}</li>
-            {% endfor %}
+<body>
 
-        </div>
-        <form action="/handleClient" method="post">
-            <input type="text" name="myMessage">
-            <button id="newClient">Login</button>
-        </form>
+    <h3 style='color: #ccc;font-size: 30px;'>No message yet..</h3>
+    <div class="message_holder"></div>
 
-            <button id="sendbutton">Send</button>
-    </body>
+    <form action="" method="POST">
+        <input type="text" class="username" placeholder="User Name" />
+        <input type="text" class="message" placeholder="Messages" />
+        <input type="submit" />
+    </form>
 
-    <script>
-            $.ajax({
-              url: "/handleClient",
-              type: "get",
-              data: {},
-              success: function(response) {
-                <!--$("#place_for_suggestions").html(messages);-->
-                console.log(response)
-                $('#messages').load(messages)
-              },
-              error: function(xhr) {
-                //Do Something to handle error
-              }
-            });
-    </script>
+
+
+</body>
+
 </html>
